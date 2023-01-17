@@ -1,6 +1,8 @@
-specVersion: 0.0.1
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
+features:
+  - fullTextSearch
 dataSources:
   - kind: ethereum
     name: Contract
@@ -8,6 +10,7 @@ dataSources:
     source:
       address: "0xBaFDdDCd96e18Bedd401f781c4020E8677898828"
       abi: Contract
+      startBlock: 26815319
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

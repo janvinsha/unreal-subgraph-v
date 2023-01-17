@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   Contract,
   Approval,
@@ -8,33 +8,38 @@ import {
   MarketItemSale,
   ProfileCreated,
   ProfileEdited,
-  Transfer
-} from "../generated/Contract/Contract"
-import { ExampleEntity } from "../generated/schema"
+  Transfer,
+} from "../generated/Contract/Contract";
 
+import {
+  ExampleEntity,
+  Collection,
+  Profile,
+  MarketItem,
+} from "../generated/schema";
 export function handleApproval(event: Approval): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+  let entity = ExampleEntity.load(event.transaction.from.toHex());
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
   if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+    entity = new ExampleEntity(event.transaction.from.toHex());
 
     // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+    entity.count = BigInt.fromI32(0);
   }
 
   // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  entity.count = BigInt.fromI32(1);
 
   // Entity fields can be set based on event parameters
-  entity.owner = event.params.owner
-  entity.approved = event.params.approved
+  entity.owner = event.params.owner;
+  entity.approved = event.params.approved;
 
   // Entities can be written to the store with `.save()`
-  entity.save()
+  entity.save();
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
@@ -70,15 +75,77 @@ export function handleApproval(event: Approval): void {
 }
 
 export function handleApprovalForAll(event: ApprovalForAll): void {}
-
-export function handleCollectionCreated(event: CollectionCreated): void {}
-
-export function handleMarketItemCreated(event: MarketItemCreated): void {}
-
-export function handleMarketItemSale(event: MarketItemSale): void {}
-
-export function handleProfileCreated(event: ProfileCreated): void {}
-
-export function handleProfileEdited(event: ProfileEdited): void {}
-
 export function handleTransfer(event: Transfer): void {}
+
+export function handleMarketItemSale(event: MarketItemSale): void {
+  let marketItem = MarketItem.load(event.params.tokenId.toString());
+  if (marketItem == null) {
+    marketItem = new MarketItem(event.params.tokenId.toString());
+  }
+  marketItem.tokenId = event.params.tokenId;
+  marketItem.seller = event.params.seller;
+  marketItem.owner = event.params.owner;
+  marketItem.price = event.params.price;
+  marketItem.sold = event.params.sold;
+  marketItem.collection = event.params.collection;
+  marketItem.name = event.params.name;
+  marketItem.image = event.params.image;
+  marketItem.category = event.params.category;
+  marketItem.description = event.params.description;
+  marketItem.tags = event.params.tags;
+  marketItem.save();
+}
+
+export function handleCollectionCreated(event: CollectionCreated): void {
+  let collection = new Collection(event.transaction.from.toHex());
+  collection.collectionId = event.params.collectionId;
+  collection.banner = event.params.banner;
+  collection.dp = event.params.dp;
+  collection.owner = event.params.owner;
+  collection.name = event.params.name;
+  collection.description = event.params.description;
+  collection.tags = event.params.tags;
+  collection.save();
+}
+
+export function handleMarketItemCreated(event: MarketItemCreated): void {
+  let marketItem = new MarketItem(event.params.tokenId.toString());
+  marketItem.tokenId = event.params.tokenId;
+  marketItem.seller = event.params.seller;
+  marketItem.owner = event.params.owner;
+  marketItem.price = event.params.price;
+  marketItem.sold = event.params.sold;
+  marketItem.collection = event.params.collection;
+  marketItem.name = event.params.name;
+  marketItem.image = event.params.image;
+  marketItem.category = event.params.category;
+  marketItem.description = event.params.description;
+  marketItem.tags = event.params.tags;
+  marketItem.save();
+}
+
+export function handleProfileCreated(event: ProfileCreated): void {
+  let profile = Profile.load(event.params.profileId.toHex());
+  if (profile == null) {
+    profile = new Profile(event.params.profileId.toHex());
+  }
+  profile.profileId = event.params.profileId;
+  profile.banner = event.params.banner;
+  profile.dp = event.params.dp;
+  profile.name = event.params.name;
+  profile.bio = event.params.bio;
+  profile.save();
+}
+
+export function handleProfileEdited(event: ProfileEdited): void {
+  let profile = Profile.load(event.params.profileId.toHex());
+  if (profile == null) {
+    profile = new Profile(event.params.profileId.toHex());
+  }
+  profile.profileId = event.params.profileId;
+  profile.banner = event.params.banner;
+  profile.dp = event.params.dp;
+  profile.name = event.params.name;
+  profile.bio = event.params.bio;
+  profile.save();
+}
